@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route("/", methods=["POST", "GET"])
 def webhookWhatsapp():
     if request.method == "GET":
-        if request.args.get('hub.verify_token') == "capybaraCapybara":
+        if request.args.get('hub.verify_token') == "tokenVerificacion":
             return request.args.get('hub.challenge')
         else:
             f = open("textData.txt", "r")
@@ -23,8 +23,8 @@ def webhookWhatsapp():
     f.close()
     
     # Sending the message back
-    whatsappToken = "EAADKgGfdPqcBAPXwfVRi4AhNuZCD8zDMQlj2siXESVV49XGSeDQYfT2NfqUJI8LB3Ljhws5FvNq88e9CBu6xMohUqoFc7jZCzIjZBtzrptQZBzBjRklNkidvHTm0WjVHDKtwsTnJSZBicE83j5qktr482UNDA8Xi4D0cDgeDFZB2XFrQIl40vZA6yybzL60PtUaH5RF9RIZAVAZDZD"
-    numberId = "109130995520220"
+    whatsappToken = "tokenWhatsApp"
+    numberId = "numberID"
     whatsapp = WhatsApp(whatsappToken, numberId)
     whatsapp.send_message(messageBody, phoneNumber.replace("521","52"))
     
