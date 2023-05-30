@@ -1,44 +1,34 @@
-import os
-import openai
-import requests
-from flask import Flask, request, Response
+from flask import Flask, jsonify, request
+from heyoo import WhatsApp
 
 app = Flask(__name__)
-instanceId = "WhatsApp Bussines placeholder"
-token = "WhatsApp Bussines placeholder"
 
-openai.api_key = os.getenv("openAI_Key")
+@app.route("/", methods=["POST", "GET"])
+def webhookWhatsapp():
+    if request.method == "GET":
+        if request.args.get('hub.verify_token') == "capybaraCapybara":
+            return request.args.get('hub.challenge')
+        else:
+            f = open("textData.txt", "r")
+            textContents = f.read()
+            f.close()
+            return textContents.replace('\n', '<br>')
 
-def generate_response(question):
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt="La siguiente es una conversación con un asistente de AI. El asistente es útil, creativo, ingenioso y muy amigable.\n\nHumano: Hola, ¿quién eres?\nAI: Soy un AI creado por OpenAI. ¿En qué puedo ayudarte hoy?\nHumano: Quiero cancelar mi suscripción.\nAI:",
-        temperature=0.9,
-        max_tokens=150,
-        top_p=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.6,
-        stop=[" Human:", " AI:"]
-    )
-    return response.choices[0].text.strip()
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
     data = request.get_json()
-    number = data['messages'][0]['author'].replace('@c.us', '')
-    message = data['messages'][0]['body']
-    response_text = generate_response(message)
-    send_message(number, response_text)
-    return Response(status=200)
+    phoneNumber = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
+    messageBody = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+    
+    f = open("textData.txt", "a")
+    f.write("\nTelefono:" + phoneNumber + " | Mensaje:" + messageBody)
+    f.close()
+    
+    # Sending the message back
+    whatsappToken = "EAADKgGfdPqcBAPXwfVRi4AhNuZCD8zDMQlj2siXESVV49XGSeDQYfT2NfqUJI8LB3Ljhws5FvNq88e9CBu6xMohUqoFc7jZCzIjZBtzrptQZBzBjRklNkidvHTm0WjVHDKtwsTnJSZBicE83j5qktr482UNDA8Xi4D0cDgeDFZB2XFrQIl40vZA6yybzL60PtUaH5RF9RIZAVAZDZD"
+    numberId = "109130995520220"
+    whatsapp = WhatsApp(whatsappToken, numberId)
+    whatsapp.send_message(messageBody, phoneNumber.replace("521","52"))
+    
+    return jsonify({"status": "success"}, 200)
 
-def send_message(number, message):
-    url = f"https://api.chat-api.com/instance{instanceId}/sendMessage?token={token}"
-    data = {
-        "phone": number,
-        "body": message
-    }
-    response = requests.post(url, json=data)
-    return response.json()
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
