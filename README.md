@@ -16,3 +16,6 @@ Se ha añadido la API de OpenAI, haciendo uso del modelo DaVinci 03 con el fin d
 <p align="center">
 <img width="400" src="https://github.com/T-UwU/WA-Integration_Microtec/assets/72111629/ebb59e20-d91d-4fac-9e20-99a28dc4652e">
 </p>
+
+## Segunda actualización de avances
+Se modifico la forma en la que funciona el bot, utilizando Llama Index para manejar grandes cantidades de información de manera eficiente y permitiendo que el bot tenga acceso a esta sin necesidad de saturar el prompt cada vez que se hace una llamada. De igual forma se implementaron metodos de API con el fin de poder realizar consultas en la API de Credicel y poder informar al usuario de los valores que retornen estas consultas, de momento los metodos de consulta involucrados se limitan a la consulta de saldo con fecha de consulta y la recuperación de la TAG a traves de cuatro diferentes metodos. Tambien se reescribio buena parte del codigo para hacerlo mas legible.
